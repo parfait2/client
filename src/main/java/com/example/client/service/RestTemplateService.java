@@ -1,5 +1,6 @@
 package com.example.client.service;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -21,8 +22,8 @@ public class RestTemplateService {
         System.out.println(uri.toString());
 
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(uri, String.class);
+        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
 
-        return result;
+        return result.getBody();
     }
 }
