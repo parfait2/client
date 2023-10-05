@@ -1,5 +1,6 @@
 package com.example.client.service;
 
+import com.example.client.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -10,19 +11,32 @@ import java.net.URI;
 
 @Service
 public class RestTemplateService {
+
+    /**
+     * RestTemplate으로 get 호출하기
+     */
     // http://localhost/api/server/hello
     // response
-    public String hello() {
+    public UserResponse hello() {
+        // UriComponentBuilder로 주소 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("http://localhost:9090")
                 .path("/api/server/hello")
+                /*
+                주소 뒤에 쿼리 파라미터가 붙는다. /hello?name=haejun&age=10
+                .queryParam("name", "haejun")
+                .queryParam("age", 10)
+                */
                 .encode()
                 .build()
                 .toUri();
         System.out.println(uri.toString());
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+
+        // getForObject 사용 시 UserResponse 타입으로 받는다. 밑의 방법 추천.
+        // server가 data를 줄 때 json을 보고 클래스 작성 후 RestTemplate으로 get 또는 post 형태로 주고 받는다. post일 때는 RequestBody로 보낸다.
+        ResponseEntity<UserResponse> result = restTemplate.getForEntity(uri, UserResponse.class);
 
         return result.getBody();
     }
