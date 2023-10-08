@@ -18,6 +18,8 @@ public class ApiController {
 
     @GetMapping("/hello")
     public UserResponse getHello() {
-        return restTemplateService.hello();
+        restTemplateService.exchange();
+
+        return new UserResponse();
     }
 }

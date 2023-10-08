@@ -1,11 +1,14 @@
 package com.example.client.service;
 
+import com.example.client.dto.Req;
 import com.example.client.dto.UserRequest;
 import com.example.client.dto.UserResponse;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -72,4 +75,76 @@ public class RestTemplateService {
 
         return response.getBody();
     }
+
+    public UserResponse exchange() {
+        URI uri = UriComponentsBuilder
+                .fromUriString("http://localhost:9090")
+                .path("/api/server/user/{userId}/name/{userName}")
+                .encode()
+                .build()
+                // expand : pathVariable로 순차적으로 넣어준다. cf. map을 사용해도 되지만 직관적으로 expand를 써도 좋다.
+                .expand(100, "haejun")
+                .toUri();
+        System.out.println(uri);
+
+        // http body -> object -> object mapper -> json -> rest template -> http json body
+        UserRequest req = new UserRequest();
+        req.setName("haejun");
+        req.setAge(10);
+
+        RequestEntity<UserRequest> requestEntity = RequestEntity
+                .post(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("x-authorization", "abcd")
+                .header("custom-header", "fff")
+                .body(req);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<UserResponse> response = restTemplate.exchange(requestEntity, UserResponse.class);
+
+        return response.getBody();
+    }
+
+    public UserResponse genericExchange() {
+        URI uri = UriComponentsBuilder
+                .fromUriString("http://localhost:9090")
+                .path("/api/server/user/{userId}/name/{userName}")
+                .encode()
+                .build()
+                // expand : pathVariable로 순차적으로 넣어준다. cf. map을 사용해도 되지만 직관적으로 expand를 써도 좋다.
+                .expand(100, "haejun")
+                .toUri();
+        System.out.println(uri);
+
+        // http body -> object -> object mapper -> json -> rest template -> http json body
+
+        UserRequest userRequest = new UserRequest();
+        userRequest.setName("haejun");
+        userRequest.setAge(10);
+
+        Req<UserRequest> req = new Req<UserRequest>();
+        req.setHeader(
+            new Req.Header()
+        );
+
+        req.setrBody(
+            userRequest
+        );
+
+        RequestEntity<UserRequest> requestEntity = RequestEntity
+                .post(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("x-authorization", "abcd")
+                .header("custom-header", "fff")
+                .body(req);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // ParameterizedTypeReference : generic type에 대응하기 위함.
+        ResponseEntity<Req<UserResponse>> response
+                = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<Req<UserResponse>>() {});
+
+        return response.getBody();
+    }
+
 }
