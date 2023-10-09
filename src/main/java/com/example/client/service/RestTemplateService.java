@@ -105,7 +105,7 @@ public class RestTemplateService {
         return response.getBody();
     }
 
-    public UserResponse genericExchange() {
+    public Req<UserResponse> genericExchange() {
         URI uri = UriComponentsBuilder
                 .fromUriString("http://localhost:9090")
                 .path("/api/server/user/{userId}/name/{userName}")
@@ -127,11 +127,11 @@ public class RestTemplateService {
             new Req.Header()
         );
 
-        req.setrBody(
+        req.setResBody(
             userRequest
         );
 
-        RequestEntity<UserRequest> requestEntity = RequestEntity
+            RequestEntity<Req<UserRequest>> requestEntity = RequestEntity
                 .post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("x-authorization", "abcd")

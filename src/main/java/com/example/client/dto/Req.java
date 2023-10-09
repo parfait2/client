@@ -16,7 +16,7 @@ public class Req<T> {
     */
 
     private Header header;
-    private T rBody;
+    private T resBody;
 
     public static class Header {
         private String responseCode;
@@ -45,19 +45,19 @@ public class Req<T> {
         this.header = header;
     }
 
-    public T getrBody() {
-        return rBody;
+    public T getResBody() {
+        return resBody;
     }
 
-    public void setrBody(T rBody) {
-        this.rBody = rBody;
+    public void setResBody(T resBody) {
+        this.resBody = resBody;
     }
 
     @Override
     public String toString() {
         return "Req{" +
                 "header=" + header +
-                ", body=" + rBody +
+                ", body=" + resBody +
                 '}';
     }
 }
